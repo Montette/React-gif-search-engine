@@ -5,7 +5,7 @@ var styles = {
   margin: '0.5em'
 };
 
-var Gif = React.createClass({
+Gif = React.createClass({
     getUrl: function() {
     return this.props.sourceUrl || GIPHY_LOADING_URL;
   },

@@ -1,4 +1,4 @@
-var Search = React.createClass({
+Search = React.createClass({
     
     // stan poczatkowy, searching bar jest pusty
     getInitialState(){
@@ -6,6 +6,28 @@ var Search = React.createClass({
             searchingText: ''
         };
     },
+    
+    
+    render: function(){
+        
+        var styles = {
+            fontSize: '1.5em',
+            width: '90%',
+            maxWidth: '350px'
+        };
+        
+        return  (
+            <input
+            type='text'
+            onChange={this.handleChange}
+            onKeyUp={this.handleKeyUp}
+            placeholder='Tutaj wpisz wyszukiwaną frazę'
+            style={styles}
+            value={this.state.searchTerm} //?
+            />
+            );
+            
+         },
     
     // funkcja uruchamia się w momencie zmiany wartości input (atrybut pola input - onchange)
     handleChange: function(event){
@@ -25,24 +47,7 @@ var Search = React.createClass({
     if (event.keyCode === 13) {
       this.props.onSearch(this.state.searchingText);
     }
-  },
+  }
     
-    render: function(){
-        
-        var styles = {
-            fontSize: '1.5em',
-            width: '90%',
-            maxWidth: '350px'
-        }
-        
-        return 
-            <input
-            type='text'
-            onchange={this.handleChange}
-            onKeyUp={this.handleKeyUp}
-            placeholder='Tutaj wpisz wyszukiwaną frazę'
-            style={styles}
-            value={this.state.searchTerm}
-            />
-         }
+    
 })
