@@ -11,37 +11,51 @@ App = React.createClass({
     };
   },    
    
-  handleSearch: function(searchingText) {  //pobranie wpisywanego tekstu
-    this.setState({
-      loading: true  // proces ladowania
-    });
-    this.getGif(searchingText, function(gif) {  // rozpoczęcie pobierania gifa
-      this.setState({  // po zakończeniu pobierania
-        loading: false,  // zatrzymanie sygnalizowania ładowania
-        gif: gif,  // ustawienie gifa z wyniku wyszukiwania
-        searchingText: searchingText  // ustawienie nowego stanu dla wyszukiwanego tekstu
-      });
-    }.bind(this)); // zachowanie kontekstu na App
-  },
+ 	handleSearch: function(searchingText) {
+		this.setState({
+			loading: true
+		});
+		this.getGif(searchingText)
+			.then((gif) => {
+				this.setState({
+					loading: false,
+					gif: gif,
+					searchingText: searchingText
+				})
+			}	
+		)
+        .catch(error => console.log('Error', error));
+	},
     
-    
-    getGif: function(searchingText, callback) {  // 
+    getGif: function(searchingText) {  //
+        
+        return new Promise(
+        (resolve, reject) => { 
     var GIPHY_API_URL = 'https://api.giphy.com',
         GIPHY_PUB_KEY = 'KcvABchPPAeb4pIMoIgZdUzzVArAQp9G';
     var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;  // 
-    var xhr = new XMLHttpRequest();  // 
+    var xhr = new XMLHttpRequest();  
     xhr.open('GET', url);
-    xhr.onload = function() {
+    xhr.onload = () => {
         if (xhr.status === 200) {
-           var data = JSON.parse(xhr.responseText).data; // 
-            var gif = {  // 
+           const data = JSON.parse(xhr.responseText).data; 
+            const gif = {  
                 url: data.fixed_width_downsampled_url,
                 sourceUrl: data.url
             };
-            callback(gif);  // 
-        }
-    };
-    xhr.send();
+            resolve(gif); 
+
+                } else {
+                    reject(new Error(xhr.statusText)); 
+                }
+            };
+             xhr.onerror = function () {
+                reject(new Error(
+                   `XMLHttpRequest Error: ${this.statusText}`));
+             }
+            xhr.send();
+        }); 
+        
 },
       
   render: function(){
