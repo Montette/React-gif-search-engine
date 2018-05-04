@@ -1,72 +1,59 @@
-
-
-
 App = React.createClass({
-    
-  getInitialState() {
-    return {
-        loading: false,
-        searchingText: '',
-        gif: {}
-    };
-  },    
-   
- 	handleSearch: function(searchingText) {
-		this.setState({
-			loading: true
-		});
-		this.getGif(searchingText)
-			.then((gif) => {
-				this.setState({
-					loading: false,
-					gif: gif,
-					searchingText: searchingText
-				})
-			}	
-		)
-        .catch(error => console.log('Error', error));
-	},
-    
-    getGif: function(searchingText) {  //
-        
+    getInitialState() {
+        return {
+            loading: false,
+            searchingText: '',
+            gif: {}
+        };
+    },
+    handleSearch: function (searchingText) {
+        this.setState({
+            loading: true
+        });
+        this.getGif(searchingText)
+            .then((gif) => {
+                this.setState({
+                    loading: false,
+                    gif: gif,
+                    searchingText: searchingText
+                })
+            })
+            .catch(error => console.log('Error', error));
+    },
+    getGif: function (searchingText) { 
         return new Promise(
-        (resolve, reject) => { 
-    var GIPHY_API_URL = 'https://api.giphy.com',
-        GIPHY_PUB_KEY = 'KcvABchPPAeb4pIMoIgZdUzzVArAQp9G';
-    var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;  // 
-    var xhr = new XMLHttpRequest();  
-    xhr.open('GET', url);
-    xhr.onload = () => {
-        if (xhr.status === 200) {
-           const data = JSON.parse(xhr.responseText).data; 
-            const gif = {  
-                url: data.fixed_width_downsampled_url,
-                sourceUrl: data.url
-            };
-            resolve(gif); 
-
-                } else {
-                    reject(new Error(xhr.statusText)); 
+            (resolve, reject) => {
+                var GIPHY_API_URL = 'https://api.giphy.com',
+                    GIPHY_PUB_KEY = 'KcvABchPPAeb4pIMoIgZdUzzVArAQp9G';
+                var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText; // 
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText).data;
+                        const gif = {
+                            url: data.fixed_width_downsampled_url,
+                            sourceUrl: data.url
+                        };
+                        resolve(gif);
+                    } else {
+                        reject(new Error(xhr.statusText));
+                    }
+                };
+                xhr.onerror = function () {
+                    reject(new Error(
+                        `XMLHttpRequest Error: ${this.statusText}`));
                 }
-            };
-             xhr.onerror = function () {
-                reject(new Error(
-                   `XMLHttpRequest Error: ${this.statusText}`));
-             }
-            xhr.send();
-        }); 
-        
-},
-      
-  render: function(){
-      
-      var styles = {
-          margin: '0 auto',
-          textAlign: 'center',
-          width: '90%'
-      };
-      
-      return (
+                xhr.send();
+            });
+    },
+    render: function () {
+        var styles = {
+            margin: '0 auto',
+            textAlign: 'center',
+            width: '90%'
+        };
+        return (
         <div style={styles}>
             <h1>Wyszukiwarka GIFow!</h1>
             <p>Znajdź gifa na <a href='http://giphy.com'>giphy</a>. Naciskaj enter, aby pobrać kolejne gify.</p>
